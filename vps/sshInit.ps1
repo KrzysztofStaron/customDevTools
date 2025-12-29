@@ -26,12 +26,21 @@ Write-Host ""
 # ---- 1. Generate SSH key (if missing) ----
 if (-Not (Test-Path $KeyName)) {
     Write-Host "Generating SSH key: $KeyName" -ForegroundColor Yellow
-    ssh-keygen -t ed25519 -f $KeyName -C "gh-actions:$Repo" -N '""'
+    ssh-keygen -t ed25519 -q -f $KeyName -C "gh-actions:$Repo" -N '""'
 } else {
     Write-Host "SSH key already exists, skipping generation." -ForegroundColor Green
 }
 
 # ---- 2. Append public key to VPS authorized_keys ----
+Write-Host "`nAbout to append the public key to $VpsHost authorized_keys" -ForegroundColor Yellow
+Write-Host "Please confirm the repository is correct: $FullRepo" -ForegroundColor Yellow
+$confirmation = Read-Host "Continue? (y/N)"
+
+if ($confirmation -ne 'y' -and $confirmation -ne 'Y') {
+    Write-Host "Operation cancelled by user." -ForegroundColor Red
+    exit 1
+}
+
 ssh $VpsHost "mkdir -p ~/.ssh && chmod 700 ~/.ssh"
 
 Get-Content "$KeyName.pub" |
