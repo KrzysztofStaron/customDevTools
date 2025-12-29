@@ -5,7 +5,7 @@ Those scripts are not meant to be fits-all solutions, just super specyfic things
 
 ## Features
 
-### sshInit
+### worker2vps
 
 Setup of VPS access for GitHub workers
 
